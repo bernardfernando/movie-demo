@@ -1,16 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MovieCard from "./movieCard/MovieCard";
 import Form from "./Form/Form";
 
 export default function Main() {
-  const [formData, setformData] = useState({
-    name: "",
-    img_url: "",
-    director: "",
-    year: "",
-  });
-
   const [movies, setmovies] = useState([]);
 
   useEffect(() => {
@@ -25,16 +18,18 @@ export default function Main() {
     setmovies(result.data);
   }
 
-  //dealing with form data
-  const handleChange = (event) => {
-    setformData({ ...formData, [event.target.name]: event.target.value });
-    setmovies([...movies, res.data]);
-  };
+  // //dealing with form data
+  // const handleChange = (event) => {
+  //   setformData({ ...formData, [event.target.name]: event.target.value });
+  //   setmovies([...movies, res.data]);
+  // };
 
   //create
-  const handleAddMovie = async (event) => {
-    event.preventDefault();
-    const res = await axios.post("http://localhost:4242/movies", formData);
+  const handleAddMovie = async (newMovieFormData) => {
+    const res = await axios.post(
+      "http://localhoset:4242/movies",
+      newMovieFormData
+    );
     setmovies([...movies, res.data]);
   };
 
@@ -46,11 +41,25 @@ export default function Main() {
     getMovies();
   };
 
+  //update
+  const handleUpdateMovie = async (movie) => {
+    console.log("clicked");
+    const res = await axios.put(
+      `http://localhost:4242/movies/${movie._id}`,
+      movie
+    );
+    getMovies();
+  };
+
   return (
     <div>
-      <Form handleChange={handleChange} handleAddMovie={handleAddMovie} />
+      <Form onSubmitFunction={handleAddMovie} />
       <h3>This is my Main!</h3>
-      <MovieCard movies={movies} handleDelete={handleDelete} />
+      <MovieCard
+        movies={movies}
+        handleDelete={handleDelete}
+        handleUpdatMovie={handleUpdateMovie}
+      />
     </div>
   );
 }
